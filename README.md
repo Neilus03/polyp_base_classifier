@@ -34,7 +34,7 @@ pip install -r requirements.txt
 
 ## Usage
 
-1. **Data Preparation**: Place your polyp image data in the `POLYP_DATA` directory and update the CSV files with image names and labels.
+1. **Data Preparation**: Place the polyp image data in the `POLYP_DATA` directory and update the CSV files with image names and labels.
    
 2. **Training**: Run the training script:
 
@@ -52,10 +52,3 @@ pip install -r requirements.txt
 
     This will output the performance metrics for the trained model.
 
-## Contributing
-
-Feel free to fork the repository and submit pull requests. For bugs, questions, and discussions, please use the [Issues](https://github.com/Neilus03/polyp_base_classifier/issues) section.
-
-## License
-
-MIT License. See [LICENSE](https://github.com/Neilus03/polyp_base_classifier/blob/main/LICENSE) for more details.
