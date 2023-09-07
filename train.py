@@ -13,12 +13,16 @@ learning_rate = 0.001
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # Create data loaders
-data_dir = 'POLYP_DATA'
-train_csv = 'm_train/train.csv'
-test_csv = 'm_test/test.csv'
-valid_csv = 'm_valid/valid.csv'
+train_dir = '/content/drive/MyDrive/POLYP_CLASSIFICATION_PROJECT/POLYP_DATA/m_train'
+test_dir = '/content/drive/MyDrive/POLYP_CLASSIFICATION_PROJECT/POLYP_DATA/m_test'
+valid_dir = '/content/drive/MyDrive/POLYP_CLASSIFICATION_PROJECT/POLYP_DATA/m_valid'
 
-train_loader, test_loader, valid_loader = create_data_loaders(data_dir, train_csv, test_csv, valid_csv, batch_size)
+train_csv = os.path.join(train_dir, 'train.csv')
+test_csv = os.path.join(test_dir, 'test.csv')
+valid_csv = os.path.join(valid_dir, 'valid.csv')
+
+train_loader, test_loader, valid_loader = create_data_loaders(train_dir, test_dir, valid_dir, batch_size)
+
 
 # Initialize the model
 num_classes = 2  # Binary classification
