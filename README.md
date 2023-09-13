@@ -42,9 +42,9 @@ pip install -r requirements.txt
     python train.py
     ```
 
-    This will train the model and save the model parameters as `custom_efficientnet.pth`.
+    This will train the model and save the model parameters as `custom_efficientnet.pth`. You can access the already trained custom_efficientnet checkpoint pth [here](https://drive.google.com/file/d/1-JQsGozeD_SEvJAAMFexoynj0uDASlXf/view?usp=sharing)
 
-3. **Evaluation**: Run the evaluation script:
+4. **Evaluation**: Run the evaluation script:
 
     ```bash
     python evaluation.py
