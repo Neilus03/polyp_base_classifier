@@ -62,4 +62,3 @@ for epoch in range(num_epochs):
 # Save the trained model
 torch.save(model.state_dict(), 'custom_efficientnet.pth')
 print("Model saved.")
-
