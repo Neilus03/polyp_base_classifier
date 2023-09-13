@@ -67,8 +67,9 @@ print(f"Precision: {precision}")
 print(f"Recall: {recall}")
 print(f"F1 Score: {f1}")
 
-
+'''
 class_names = ['0', '1']  # Class 0 (Non-adenomatous)', 'Class 1 (Adenomatous)
 class_report = classification_report(true_labels, predicted_labels, target_names=class_names)
 print("Per-Class Metrics:")
 print(class_report)
+'''
