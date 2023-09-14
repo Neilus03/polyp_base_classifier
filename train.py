@@ -1,8 +1,9 @@
 import torch
 import torch.nn as nn
+import os
 import torch.optim as optim
 from torchvision import transforms
-from torch.utils.data import DataLoader
+from torch.utils.data import DataLoader, Dataset
 from dataloader import create_data_loaders
 from model import initialize_model, CustomEfficientNet
 
@@ -23,6 +24,16 @@ valid_csv = os.path.join(valid_dir, 'valid.csv')
 
 train_loader, test_loader, valid_loader = create_data_loaders(train_dir, test_dir, valid_dir, batch_size)
 
+# Calculate class weights
+class_counts = [0, 0]
+for _, labels in train_loader:
+    unique, counts = torch.unique(labels, return_counts=True)
+    for u, c in zip(unique, counts):
+        class_counts[u] += c.item()
+
+class_weights = [sum(class_counts) / c for c in class_counts]
+print(class_weights)
+class_weights = torch.tensor(class_weights).to(device)
 
 # Initialize the model
 num_classes = 2  # Binary classification
@@ -30,7 +41,7 @@ model = initialize_model(num_classes)
 model.to(device)
 
 # Define loss function and optimizer
-criterion = nn.BCELoss()  # Binary Cross-Entropy Loss for binary classification
+criterion = nn.CrossEntropyLoss(weight=class_weights) #Cross-Entropy Loss with class weights
 optimizer = optim.Adam(model.parameters(), lr=learning_rate)
 
 # Training loop
@@ -39,7 +50,7 @@ for epoch in range(num_epochs):
     running_loss = 0.0
 
     for images, labels in train_loader:
-        images, labels = images.to(device), labels.to(device)
+        images, labels = images.to(device), labels.to(device).long()
 
         # Zero the parameter gradients
         optimizer.zero_grad()
@@ -48,7 +59,7 @@ for epoch in range(num_epochs):
         outputs = model(images)
 
         # Calculate loss
-        loss = criterion(outputs, labels.float().view(-1, 1))  # Convert labels to float and reshape
+        loss = criterion(outputs, labels)
         loss.backward()
 
         # Optimize
