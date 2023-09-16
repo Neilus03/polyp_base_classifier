@@ -6,6 +6,11 @@ from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_sc
 from dataloader import create_data_loaders, PolypDataset
 from model import initialize_model, CustomEfficientNet
 
+from sklearn.metrics import classification_report, confusion_matrix
+import seaborn as sns
+import matplotlib.pyplot as plt
+
+
 # Define hyperparameters
 batch_size = 32
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
@@ -66,3 +71,20 @@ print(f"Accuracy: {accuracy}")
 print(f"Precision: {precision}")
 print(f"Recall: {recall}")
 print(f"F1 Score: {f1}")
+
+
+# Per-Class Evaluation
+class_names = ['Class 0 (Non-adenomatous)', 'Class 1 (Adenomatous)']
+class_report = classification_report(true_labels, predicted_labels, target_names=class_names)
+print("Per-Class Metrics:")
+print(class_report)
+
+# Confusion Matrix Visualization
+conf_matrix = confusion_matrix(true_labels, predicted_labels)
+plt.figure(figsize=(8, 6))
+sns.heatmap(conf_matrix, annot=True, fmt='d', cmap='Blues', xticklabels=class_names, yticklabels=class_names)
+plt.xlabel('Predicted Labels')
+plt.ylabel('True Labels')
+plt.title('Confusion Matrix')
+plt.show()
+
