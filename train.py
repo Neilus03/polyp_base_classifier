@@ -52,8 +52,9 @@ valid_losses = []
 train_accuracies = []
 valid_accuracies = []
 
-best_valid_loss = float('inf')
-patience = 5  # Number of epochs with no improvement to wait
+#best_valid_loss = float('inf')
+best_valid_accuracy = float ('inf')
+patience = 10  # Number of epochs with no improvement to wait
 epochs_without_improvement = 0
 
 #Helper function to compute accuracy
@@ -123,55 +124,55 @@ for epoch in range(num_epochs):
     print(f"Epoch [{epoch + 1}/{num_epochs}] Train Loss: {train_loss} Valid Loss: {valid_loss} Train Acc: {train_accuracy} Valid Acc: {valid_accuracy}")
 
     # Inside your training loop, after computing the validation loss:
-    if valid_loss < best_valid_loss:
-        best_valid_loss = valid_loss
+    if valid_accuracy < best_valid_accuracy:
+        best_valid_accuracy = valid_accuracy
         torch.save(model.state_dict(), 'best_efficientnet.pth')
-        print("Best model saved with validation loss:", best_valid_loss)
+        print(f"Best model saved with validation {best_valid_accuracy} accuracy:")
         epochs_without_improvement = 0
     else:
         epochs_without_improvement += 1
         if epochs_without_improvement >= patience:
-            print("Early stopping due to no improvement in validation loss.")
+            print("Early stopping due to no improvement in validation accuracy.")
             break
 
-# Enhanced Plotting of the training and validation losses and accuracies
-fig, ax1 = plt.subplots(figsize=(12, 6))
+    # Enhanced Plotting of the training and validation losses and accuracies
+    fig, ax1 = plt.subplots(figsize=(12, 6))
 
-# Twin the axes
-ax2 = ax1.twinx()
+    # Twin the axes
+    ax2 = ax1.twinx()
 
-# Plotting loss (on the left y-axis)
-ln1 = ax1.plot(train_losses, color='b', label='Training Loss')
-ln2 = ax1.plot(valid_losses, color='r', linestyle='--', label='Validation Loss')
-ax1.set_xlabel('Epochs')
-ax1.set_ylabel('Loss', color='black')
-ax1.tick_params(axis='y', labelcolor='black')
-ax1.grid(None)
+    # Plotting loss (on the left y-axis)
+    ln1 = ax1.plot(train_losses, color='b', label='Training Loss')
+    ln2 = ax1.plot(valid_losses, color='r', linestyle='--', label='Validation Loss')
+    ax1.set_xlabel('Epochs')
+    ax1.set_ylabel('Loss', color='black')
+    ax1.tick_params(axis='y', labelcolor='black')
+    ax1.grid(None)
 
-# Highlighting the epoch with the minimum validation loss
-min_valid_epoch = np.argmin(valid_losses)
-ax1.axvline(min_valid_epoch, color='gray', linestyle='--')
-ax1.annotate(f'Lowest Valid Loss at Epoch {min_valid_epoch + 1}', xy=(min_valid_epoch, valid_losses[min_valid_epoch]),
-             xytext=(min_valid_epoch - 1, valid_losses[min_valid_epoch] + 0.05), arrowprops=dict(facecolor='black', arrowstyle='->'))
+    # Highlighting the epoch with the minimum validation loss
+    max_valid_epoch = np.argmax(valid_accuracies)
+    ax1.axvline(max_valid_epoch, color='gray', linestyle='--')
+    ax1.annotate(f'Highest Valid accuracy at Epoch {max_valid_epoch + 1}', xy=(max_valid_epoch, valid_losses[max_valid_epoch]),
+                xytext=(max_valid_epoch - 1, valid_losses[max_valid_epoch] + 0.05), arrowprops=dict(facecolor='black', arrowstyle='->'))
 
-# Plotting accuracy (on the right y-axis)
-ln3 = ax2.plot(train_accuracies, color='g', label='Training Accuracy')
-ln4 = ax2.plot(valid_accuracies, color='m', linestyle='--', label='Validation Accuracy')
-ax2.set_ylabel('Accuracy', color='black')
-ax2.tick_params(axis='y', labelcolor='black')
-ax2.grid(None)
+    # Plotting accuracy (on the right y-axis)
+    ln3 = ax2.plot(train_accuracies, color='g', label='Training Accuracy')
+    ln4 = ax2.plot(valid_accuracies, color='m', linestyle='--', label='Validation Accuracy')
+    ax2.set_ylabel('Accuracy', color='black')
+    ax2.tick_params(axis='y', labelcolor='black')
+    ax2.grid(None)
 
-# Combined legend for both y-axes
-lns = ln1 + ln2 + ln3 + ln4
-labs = [l.get_label() for l in lns]
-ax1.legend(lns, labs, loc=0)
+    # Combined legend for both y-axes
+    lns = ln1 + ln2 + ln3 + ln4
+    labs = [l.get_label() for l in lns]
+    ax1.legend(lns, labs, loc=0)
 
-# Setting title
-plt.title('Training and Validation Losses & Accuracies')
+    # Setting title
+    plt.title('Training and Validation Losses & Accuracies')
 
-# Save the figure as an image
-plt.savefig('training_validation_plot.png')
+    # Save the figure as an image
+    plt.savefig('training_validation_plot.png')
 
+    plt.draw()
 # Display the plot
 plt.show()
-
