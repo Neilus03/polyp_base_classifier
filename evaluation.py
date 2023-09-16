@@ -3,7 +3,7 @@ import torch.nn as nn
 from torchvision import transforms
 from torch.utils.data import DataLoader
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
-from dataloader import create_data_loaders
+from dataloader import create_data_loaders, PolypDataset
 from model import initialize_model, CustomEfficientNet
 
 # Define hyperparameters
@@ -11,21 +11,16 @@ batch_size = 32
 device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 # Load the trained model
-try:
-    model = initialize_model(num_classes=2)
-    model.load_state_dict(torch.load("custom_efficientnet.pth"))
-except FileNotFoundError:
-    raise FileNotFoundError("Trained model file not found.")
-
-#Ensure model is in device
+model = initialize_model(num_classes=2)
+model.load_state_dict(torch.load('/content/drive/MyDrive/POLYP_CLASSIFICATION_PROJECT/best_efficientnet.pth'))
 model.to(device)
 
 # Set the model to evaluation mode
 model.eval()
 
 # Create a data loader for the test dataset
-data_dir = 'POLYP_DATA' 
-test_csv = 'm_test/test.csv'
+data_dir = '/content/drive/MyDrive/POLYP_CLASSIFICATION_PROJECT/POLYP_DATA/m_test'
+test_csv = '/content/drive/MyDrive/POLYP_CLASSIFICATION_PROJECT/POLYP_DATA/m_test/test.csv'
 
 test_loader = DataLoader(
     PolypDataset(data_dir=data_dir, csv_file=test_csv, transform=transforms.Compose([
@@ -50,7 +45,12 @@ with torch.no_grad():
         outputs = model(images)
 
         # Convert the outputs to binary predictions (0 or 1)
-        predicted = (outputs > 0.5).float()
+        _, predicted = torch.max(outputs, 1)  # Get the index of the max probability
+
+
+        print("Outputs shape:", outputs.shape)
+        print("Labels shape:", labels.shape)
+        print("Predicted shape:", predicted.shape)
 
         true_labels.extend(labels.cpu().numpy())
         predicted_labels.extend(predicted.cpu().numpy())
@@ -66,10 +66,3 @@ print(f"Accuracy: {accuracy}")
 print(f"Precision: {precision}")
 print(f"Recall: {recall}")
 print(f"F1 Score: {f1}")
-
-'''
-class_names = ['0', '1']  # Class 0 (Non-adenomatous)', 'Class 1 (Adenomatous)
-class_report = classification_report(true_labels, predicted_labels, target_names=class_names)
-print("Per-Class Metrics:")
-print(class_report)
-'''
