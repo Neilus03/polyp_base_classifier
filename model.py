@@ -25,6 +25,3 @@ class CustomEfficientNet(nn.Module):
 def initialize_model(num_classes):
     model = CustomEfficientNet(num_classes)
     return model
-
-
-
