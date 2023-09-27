@@ -8,7 +8,7 @@ class CustomEfficientNet(nn.Module):
         # Load pre-trained EfficientNetV2 model
         self.backbone = torch.hub.load('hankyul2/EfficientNetV2-pytorch', 'efficientnet_v2_s', pretrained=True, dropout=0.0, stochastic_depth=0.0)
 
-        # Modify the classifier to your desired number of classes
+       
         self.classifier = nn.Sequential(
             nn.Linear(1000, 256),
             nn.ReLU(),
